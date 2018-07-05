@@ -1,9 +1,10 @@
 /*
- *  Copyright (c) 2017-2018, Uber Technologies, Inc.
- *  Copyright (c) 2015-2018, Facebook, Inc.
+ *  Copyright (c) 2015, Facebook, Inc.
+ *  All rights reserved.
  *
- *  This source code is licensed under the MIT license found in the
- *  LICENSE file in the root directory of this source tree.
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant
+ *  of patent rights can be found in the PATENTS file in the same directory.
  *
  */
 
@@ -46,8 +47,7 @@ typedef NS_ENUM(NSUInteger, FBTestSnapshotFileNameType) {
   if (self = [super init]) {
     _testName = [testName copy];
     _deviceAgnostic = NO;
-    _agnosticOptions = FBSnapshotTestCaseAgnosticOptionNone;
-
+    
     _fileManager = [[NSFileManager alloc] init];
   }
   return self;
@@ -92,10 +92,20 @@ typedef NS_ENUM(NSUInteger, FBTestSnapshotFileNameType) {
                            tolerance:(CGFloat)tolerance
                                error:(NSError **)errorPtr
 {
+  return [self compareSnapshotOfViewOrLayer:viewOrLayer selector:selector identifier:identifier tolerance:tolerance colorTolerance:0.0 error:errorPtr];
+}
+
+- (BOOL)compareSnapshotOfViewOrLayer:(id)viewOrLayer
+                            selector:(SEL)selector
+                          identifier:(NSString *)identifier
+                           tolerance:(CGFloat)tolerance
+                           colorTolerance:(CGFloat)colorTolerance
+                               error:(NSError **)errorPtr
+{
   if (self.recordMode) {
     return [self _recordSnapshotOfViewOrLayer:viewOrLayer selector:selector identifier:identifier error:errorPtr];
   } else {
-    return [self _performPixelComparisonWithViewOrLayer:viewOrLayer selector:selector identifier:identifier tolerance:tolerance error:errorPtr];
+    return [self _performPixelComparisonWithViewOrLayer:viewOrLayer selector:selector identifier:identifier tolerance:tolerance colorTolerance:colorTolerance error:errorPtr];
   }
 }
 
@@ -127,6 +137,14 @@ typedef NS_ENUM(NSUInteger, FBTestSnapshotFileNameType) {
 - (BOOL)compareReferenceImage:(UIImage *)referenceImage
                       toImage:(UIImage *)image
                     tolerance:(CGFloat)tolerance
+                        error:(NSError **)errorPtr {
+  return [self compareReferenceImage:referenceImage toImage:image tolerance:tolerance colorTolerance:0 error:errorPtr];
+}
+
+- (BOOL)compareReferenceImage:(UIImage *)referenceImage
+                      toImage:(UIImage *)image
+                    tolerance:(CGFloat)tolerance
+               colorTolerance:(CGFloat)colorTolerance
                         error:(NSError **)errorPtr
 {
   BOOL sameImageDimensions = CGSizeEqualToSize(referenceImage.size, image.size);
@@ -278,12 +296,13 @@ typedef NS_ENUM(NSUInteger, FBTestSnapshotFileNameType) {
                                       selector:(SEL)selector
                                     identifier:(NSString *)identifier
                                      tolerance:(CGFloat)tolerance
+                                     colorTolerance:(CGFloat)colorTolerance
                                          error:(NSError **)errorPtr
 {
   UIImage *referenceImage = [self referenceImageForSelector:selector identifier:identifier error:errorPtr];
   if (nil != referenceImage) {
     UIImage *snapshot = [self _imageForViewOrLayer:viewOrLayer];
-    BOOL imagesSame = [self compareReferenceImage:referenceImage toImage:snapshot tolerance:tolerance error:errorPtr];
+    BOOL imagesSame = [self compareReferenceImage:referenceImage toImage:snapshot tolerance:tolerance colorTolerance:colorTolerance error:errorPtr];
     if (!imagesSame) {
       NSError *saveError = nil;
       if ([self saveFailedReferenceImage:referenceImage testImage:snapshot selector:selector identifier:identifier error:&saveError] == NO) {
