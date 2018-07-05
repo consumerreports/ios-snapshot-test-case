@@ -148,7 +148,7 @@ typedef NS_ENUM(NSUInteger, FBTestSnapshotFileNameType) {
                         error:(NSError **)errorPtr
 {
   BOOL sameImageDimensions = CGSizeEqualToSize(referenceImage.size, image.size);
-  if (sameImageDimensions && [referenceImage fb_compareWithImage:image tolerance:tolerance]) {
+    if (sameImageDimensions && [referenceImage fb_compareWithImage:image tolerance:tolerance colorTolerance:colorTolerance]) {
     return YES;
   }
 
