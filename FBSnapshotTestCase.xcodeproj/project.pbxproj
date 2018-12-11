@@ -344,7 +344,7 @@
 					};
 					B31987EF1AB782D000B0A900 = {
 						CreatedOnToolsVersion = 6.1.1;
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = "";
 					};
 					B31987FA1AB782D100B0A900 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -706,7 +706,7 @@
 				PRODUCT_NAME = FBSnapshotTestCase;
 				SKIP_INSTALL = YES;
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -737,7 +737,7 @@
 				PRODUCT_NAME = FBSnapshotTestCase;
 				SKIP_INSTALL = YES;
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
